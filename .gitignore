@@ -1,0 +1,18 @@
+# Reference data — local only, too large for repo
+past-projects/
+Nintendo - e-Reader-collection/
+existing-encoder-tooling/
+
+# Project docs (local planning notes)
+project-information.md
+first-plan.md
+
+# Build output
+node_modules/
+dist/
+dist-ssr/
+
+# Vite / editor
+.vite/
+*.local
+.DS_Store
