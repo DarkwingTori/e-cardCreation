@@ -243,9 +243,11 @@ const s: Record<string, React.CSSProperties> = {
     fontFamily: "'Bitter', serif",
   },
   gallery: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+    display: 'flex',
+    flexDirection: 'row',
+    overflowX: 'auto',
     gap: '10px',
+    paddingBottom: '6px',
   },
   tile: {
     background: '#FFFDF5',
@@ -258,6 +260,8 @@ const s: Record<string, React.CSSProperties> = {
     transform: 'scale(1)',
     boxShadow: 'none',
     outline: 'none',
+    flex: '0 0 auto',
+    width: '140px',
   },
   tileSelected: {
     border: '2px solid #E35336',
@@ -275,15 +279,19 @@ const s: Record<string, React.CSSProperties> = {
     borderColor: 'rgba(160,82,45,0.3)',
   },
   tileImgWrap: {
-    aspectRatio: '3/4',
+    width: '100%',
+    height: '185px',
     overflow: 'hidden',
     borderRadius: '0.5rem 0.5rem 0 0',
     background: '#EDE8D5',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   tileImg: {
     width: '100%',
     height: '100%',
-    objectFit: 'cover',
+    objectFit: 'contain',
     display: 'block',
   },
   tileName: {
