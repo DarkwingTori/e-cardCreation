@@ -146,3 +146,28 @@ export function downloadPNG(canvas: HTMLCanvasElement, filename: string): void {
 export function blockDimensions() {
   return { BLOCK_WIDTH_DOTS, BLOCK_HEIGHT_DOTS, DATA_ROWS, MAX_DATA_WIDTH }
 }
+
+// Returns a US Letter-size canvas (8.5" × 11") with the dotcode strip
+// centered horizontally and anchored 0.5" from the bottom edge.
+// Print this at 100% scale and feed the paper bottom-edge-first to the GBA scanner.
+export function renderPrintPage(raw: Uint8Array, dpi: DPIOption): HTMLCanvasElement {
+  const strip = renderStrip(raw, dpi)
+
+  const pageW = Math.round(8.5 * dpi)
+  const pageH = Math.round(11 * dpi)
+  const marginBottom = Math.round(0.5 * dpi)
+
+  const page = document.createElement('canvas')
+  page.width = pageW
+  page.height = pageH
+
+  const ctx = page.getContext('2d')!
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, pageW, pageH)
+
+  const x = Math.round((pageW - strip.width) / 2)
+  const y = pageH - strip.height - marginBottom
+  ctx.drawImage(strip, x, y)
+
+  return page
+}
