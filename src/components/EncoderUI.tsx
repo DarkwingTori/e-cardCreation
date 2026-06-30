@@ -118,46 +118,55 @@ export default function EncoderUI() {
 
   return (
     <div>
-      {/* Header */}
+      {/* ── HERO ── */}
       <header style={s.header}>
         <div style={s.headerInner}>
-          <h1 style={s.headerTitle}>e-Reader Encoder</h1>
+          <div style={s.eyebrow}>Nintendo e-Reader Preservation Tool</div>
+          <h1 style={s.headerTitle}>e-Reader Card Encoder</h1>
           <p style={s.headerSubtitle}>
-            Generate printable dotcode strips from Pokémon event cards for the Game Boy Advance e-Reader.
+            Generate printable dotcode strips for Pokémon GBA event cards.
+            Print at home and scan on real hardware.
           </p>
+          <div style={s.heroStats}>
+            <span style={s.heroStat}>83 cards</span>
+            <span style={s.heroStat}>Ruby · Sapphire</span>
+            <span style={s.heroStat}>Emerald</span>
+            <span style={s.heroStat}>Battle-e Series 1</span>
+          </div>
         </div>
       </header>
 
-      <div style={s.content}>
+      {/* ── BROWSE SECTION ── */}
+      <section style={s.browseSection}>
+        <div style={s.innerContent}>
+          <span style={s.sectionLabel}>Card Library</span>
 
-        {/* Category tabs */}
-        <div style={s.tabs}>
-          {(Object.keys(CATEGORY_LABELS) as Category[]).map((cat) => (
-            <button
-              key={cat}
-              onClick={() => handleCategoryChange(cat)}
-              style={{
-                ...s.tab,
-                ...(activeCategory === cat ? s.tabActive : {}),
-              }}
-              onMouseEnter={(e) => {
-                if (activeCategory !== cat)
-                  Object.assign((e.currentTarget as HTMLElement).style, s.tabHoverStyle)
-              }}
-              onMouseLeave={(e) => {
-                if (activeCategory !== cat)
-                  Object.assign((e.currentTarget as HTMLElement).style, s.tabLeaveStyle)
-              }}
-            >
-              {CATEGORY_LABELS[cat]}
-            </button>
-          ))}
-        </div>
+          {/* Category tabs */}
+          <div style={s.tabs}>
+            {(Object.keys(CATEGORY_LABELS) as Category[]).map((cat) => (
+              <button
+                key={cat}
+                onClick={() => handleCategoryChange(cat)}
+                style={{
+                  ...s.tab,
+                  ...(activeCategory === cat ? s.tabActive : {}),
+                }}
+                onMouseEnter={(e) => {
+                  if (activeCategory !== cat)
+                    Object.assign((e.currentTarget as HTMLElement).style, s.tabHoverStyle)
+                }}
+                onMouseLeave={(e) => {
+                  if (activeCategory !== cat)
+                    Object.assign((e.currentTarget as HTMLElement).style, s.tabLeaveStyle)
+                }}
+              >
+                {CATEGORY_LABELS[cat]}
+              </button>
+            ))}
+          </div>
 
-        {/* Card Gallery */}
-        <section style={s.panel}>
-          <h2 style={s.sectionTitle}>Select Event Card</h2>
-          <div style={s.gallery}>
+          {/* Card gallery */}
+          <div style={s.gallery} className="gallery-scroll">
             {visibleCards.map((card) => {
               const selected = card.id === selectedId
               return (
@@ -183,83 +192,86 @@ export default function EncoderUI() {
                         ;(e.currentTarget as HTMLImageElement).style.display = 'none'
                       }}
                     />
+                    <div style={s.tileNameOverlay}>
+                      <span style={s.tileNameText}>{card.name}</span>
+                      {card.romRevision && (
+                        <span style={s.revBadge}>{card.romRevision}</span>
+                      )}
+                    </div>
                   </div>
-                  <div style={s.tileMeta}>
-                    <span style={s.tileName}>{card.name}</span>
-                    {card.romRevision && (
-                      <span style={s.revBadge}>{card.romRevision}</span>
-                    )}
-                  </div>
-                  <div style={s.tileGame}>{card.game}</div>
                 </button>
               )
             })}
           </div>
-        </section>
 
-        {/* Card Detail + Instructions */}
-        <section style={s.detailPanel}>
-          <div style={s.detailLayout}>
-            <div style={s.detailImgWrap}>
-              <img
-                src={selectedCard.image}
-                alt={selectedCard.name}
-                style={s.detailImg}
-                onError={(e) => {
-                  ;(e.currentTarget as HTMLImageElement).style.display = 'none'
-                }}
-              />
-            </div>
-            <div style={s.detailInfo}>
-              <div style={s.detailHeader}>
-                <span style={s.detailName}>{selectedCard.name}</span>
-                {selectedCard.romRevision && (
-                  <span style={s.revBadge}>{selectedCard.romRevision}</span>
-                )}
+          {/* Card detail panel */}
+          <div style={s.detailPanel}>
+            <div style={s.detailLayout}>
+              <div style={s.detailImgWrap}>
+                <img
+                  src={selectedCard.image}
+                  alt={selectedCard.name}
+                  style={s.detailImg}
+                  onError={(e) => {
+                    ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+                  }}
+                />
               </div>
-              <div style={s.detailGame}>{selectedCard.game} · English</div>
-              <div style={s.compatGames}>
-                {selectedCard.instructions.compatibleGames.join(', ')}
-              </div>
+              <div style={s.detailInfo}>
+                <div style={s.detailHeader}>
+                  <span style={s.detailName}>{selectedCard.name}</span>
+                  {selectedCard.romRevision && (
+                    <span style={s.revBadgeLarge}>{selectedCard.romRevision}</span>
+                  )}
+                </div>
+                <div style={s.detailGame}>{selectedCard.game}</div>
+                <div style={s.compatGames}>
+                  {selectedCard.instructions.compatibleGames.join(' · ')}
+                </div>
 
-              <div style={s.instructionTabBar}>
-                {(['activation', 'eReaderSetup', 'cable'] as InstructionTab[]).map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setInstructionTab(tab)}
-                    style={{
-                      ...s.instrTab,
-                      ...(instructionTab === tab ? s.instrTabActive : {}),
-                    }}
-                    onMouseEnter={(e) => {
-                      if (instructionTab !== tab)
-                        Object.assign((e.currentTarget as HTMLElement).style, s.instrTabHoverStyle)
-                    }}
-                    onMouseLeave={(e) => {
-                      if (instructionTab !== tab)
-                        Object.assign((e.currentTarget as HTMLElement).style, s.instrTabLeaveStyle)
-                    }}
-                  >
-                    {tab === 'activation'
-                      ? 'Activate in Game'
-                      : tab === 'eReaderSetup'
-                      ? 'e-Reader Setup'
-                      : 'Cable & Hardware'}
-                  </button>
-                ))}
-              </div>
+                <div style={s.instructionTabBar}>
+                  {(['activation', 'eReaderSetup', 'cable'] as InstructionTab[]).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setInstructionTab(tab)}
+                      style={{
+                        ...s.instrTab,
+                        ...(instructionTab === tab ? s.instrTabActive : {}),
+                      }}
+                      onMouseEnter={(e) => {
+                        if (instructionTab !== tab)
+                          Object.assign((e.currentTarget as HTMLElement).style, s.instrTabHoverStyle)
+                      }}
+                      onMouseLeave={(e) => {
+                        if (instructionTab !== tab)
+                          Object.assign((e.currentTarget as HTMLElement).style, s.instrTabLeaveStyle)
+                      }}
+                    >
+                      {tab === 'activation'
+                        ? 'Activate in Game'
+                        : tab === 'eReaderSetup'
+                        ? 'e-Reader Setup'
+                        : 'Cable & Hardware'}
+                    </button>
+                  ))}
+                </div>
 
-              <div style={s.instructionText}>
-                {instructionText.split('\n\n').map((para, i) => (
-                  <p key={i} style={s.instructionPara}>{para}</p>
-                ))}
+                <div style={s.instructionText}>
+                  {instructionText.split('\n\n').map((para, i) => (
+                    <p key={i} style={s.instructionPara}>{para}</p>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Controls */}
-        <section style={s.panel}>
+      {/* ── ENCODER SECTION ── */}
+      <section style={s.encoderSection}>
+        <div style={s.innerContent}>
+          <span style={s.sectionLabel}>Generate Dotcode Strip</span>
+
           <div style={s.controlsRow}>
             <label style={s.label}>
               <span style={s.labelText}>Output DPI</span>
@@ -279,66 +291,77 @@ export default function EncoderUI() {
               onClick={() => loadAndRender(selectedCard, dpi)}
               disabled={loading}
             >
-              {loading ? 'Rendering…' : 'Render Strip'}
+              {loading ? <span>Rendering<LoadingDots /></span> : '▶  Render Strip'}
             </HoverButton>
+
+            <div style={s.uploadGroup}>
+              <span style={s.uploadLabel}>or upload a .raw file</span>
+              <label style={s.fileLabel}>
+                <span>Choose File</span>
+                <input
+                  type="file"
+                  accept=".raw"
+                  style={s.fileInputHidden}
+                  onChange={handleFileUpload}
+                />
+              </label>
+            </div>
           </div>
 
-          <div style={s.uploadRow}>
-            <span style={s.uploadLabel}>Or upload any .raw file:</span>
-            <label style={s.fileLabel}>
-              <span>Choose File</span>
-              <input
-                type="file"
-                accept=".raw"
-                style={s.fileInputHidden}
-                onChange={handleFileUpload}
-              />
-            </label>
+          {error && <div style={s.error}>⚠ {error}</div>}
+
+          {/* Canvas preview — dark viewer */}
+          <div style={s.previewPanel}>
+            {!canvasReady && !loading && (
+              <p style={s.previewPlaceholder}>
+                Select a card above and click <strong style={{ color: '#E35336' }}>▶ Render Strip</strong> to preview the dotcode.
+              </p>
+            )}
+            {loading && (
+              <p style={s.previewPlaceholder}>
+                Rendering<LoadingDots />
+              </p>
+            )}
+            <div
+              ref={canvasContainerRef}
+              style={{ ...s.preview, display: canvasReady ? 'block' : 'none' }}
+            />
           </div>
 
           {canvasReady && (
-            <div style={s.downloadRow}>
-              <HoverButton
-                style={{ ...s.btn, ...s.btnSienna }}
-                hoverStyle={s.btnSiennaHover}
-                onClick={handleDownloadStrip}
-              >
-                Download Strip
-              </HoverButton>
-              <HoverButton
-                style={{ ...s.btn, ...s.btnGreen }}
-                hoverStyle={s.btnGreenHover}
-                onClick={handleDownloadPrintSheet}
-              >
-                Download Print Sheet
-              </HoverButton>
-            </div>
+            <>
+              <div style={s.downloadRow}>
+                <HoverButton
+                  style={{ ...s.btn, ...s.btnOutline }}
+                  hoverStyle={s.btnOutlineHover}
+                  onClick={handleDownloadStrip}
+                >
+                  ↓  Download Strip
+                </HoverButton>
+                <HoverButton
+                  style={{ ...s.btn, ...s.btnOutlineGreen }}
+                  hoverStyle={s.btnOutlineGreenHover}
+                  onClick={handleDownloadPrintSheet}
+                >
+                  ↓  Download Print Sheet
+                </HoverButton>
+              </div>
+              <div style={s.printTips}>
+                <strong>Print tips:</strong> Use semi-glossy or glossy cardstock. Print at <strong>100% scale</strong> (disable "fit to page"). Minimum 600 DPI — 1200 DPI preferred. Feed paper <strong>bottom-edge-first</strong> into the GBA e-Reader slot. Use <em>Download Print Sheet</em> for a pre-positioned US Letter page.
+              </div>
+            </>
           )}
-        </section>
+        </div>
+      </section>
 
-        {error && <div style={s.error}>Error: {error}</div>}
-
-        {/* Preview */}
-        <section style={s.previewPanel}>
-          {!canvasReady && !loading && (
-            <p style={s.previewPlaceholder}>
-              Select a card and click <strong>Render Strip</strong> to preview the dotcode.
-            </p>
-          )}
-          {loading && <p style={s.previewPlaceholder}>Rendering<LoadingDots /></p>}
-          <div
-            ref={canvasContainerRef}
-            style={{ ...s.preview, display: canvasReady ? 'block' : 'none' }}
-          />
-        </section>
-
-        {/* Print tips */}
-        {canvasReady && (
-          <div style={s.printTips}>
-            <strong>Printing tips:</strong> Use semi-glossy or glossy cardstock. Print at <strong>100% scale</strong> (disable "fit to page"). Minimum 600 DPI — 1200 DPI preferred. Feed the paper <strong>bottom-edge-first</strong> into the GBA e-Reader slot. Use <em>Download Print Sheet</em> for a pre-positioned US Letter page.
-          </div>
-        )}
-      </div>
+      {/* ── FOOTER ── */}
+      <footer style={s.footer}>
+        <div style={s.footerInner}>
+          <span>Fan preservation project — not affiliated with, endorsed by, or sponsored by Nintendo Co., Ltd.</span>
+          <span style={s.footerDot}>·</span>
+          <span>No ROM files distributed.</span>
+        </div>
+      </footer>
     </div>
   )
 }
@@ -375,186 +398,223 @@ function HoverButton({
 }
 
 const s: Record<string, React.CSSProperties> = {
+  // ── HERO ────────────────────────────────────────────────────────────────────
   header: {
-    background: 'linear-gradient(135deg, #A0522D 0%, #E35336 50%, #F4A460 100%)',
-    padding: '2.5rem 2rem 2rem',
-    marginBottom: '2rem',
+    background: '#1C1410',
+    backgroundImage: [
+      'radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px)',
+      'linear-gradient(160deg, #0D0804 0%, #1C1410 60%, #2A1C14 100%)',
+    ].join(', '),
+    backgroundSize: '28px 28px, 100% 100%',
+    padding: 'clamp(3rem, 6vw, 5rem) 2rem clamp(2.5rem, 5vw, 4rem)',
   },
-  headerInner: { maxWidth: 1100, margin: '0 auto' },
-  headerTitle: {
-    fontSize: '2rem',
-    fontWeight: 700,
-    color: '#fff',
-    marginBottom: '0.5rem',
-    fontFamily: "'Bitter', serif",
-  },
-  headerSubtitle: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: '1rem',
-    margin: 0,
-    fontFamily: "'DM Sans', sans-serif",
-  },
-  content: {
-    padding: '0 2rem 3rem',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.25rem',
+  headerInner: {
     maxWidth: 1100,
     margin: '0 auto',
   },
-
-  // Category tabs
-  tabs: {
+  eyebrow: {
+    fontSize: '0.7rem',
+    fontWeight: 700,
+    letterSpacing: '0.14em',
+    textTransform: 'uppercase',
+    color: '#E35336',
+    fontFamily: "'DM Sans', sans-serif",
+    marginBottom: '1rem',
+  },
+  headerTitle: {
+    fontSize: 'clamp(2.25rem, 5vw, 3.75rem)',
+    fontWeight: 700,
+    color: '#FFF8F0',
+    letterSpacing: '-0.02em',
+    lineHeight: 1.08,
+    fontFamily: "'Bitter', serif",
+    marginBottom: '1rem',
+  },
+  headerSubtitle: {
+    color: 'rgba(255,248,240,0.6)',
+    fontSize: '1.05rem',
+    margin: '0 0 0',
+    fontFamily: "'DM Sans', sans-serif",
+    maxWidth: 500,
+    lineHeight: 1.65,
+  },
+  heroStats: {
     display: 'flex',
     gap: '0.5rem',
-    background: '#EDE8D5',
-    borderRadius: '0.625rem',
-    padding: '0.375rem',
-    alignSelf: 'flex-start',
+    flexWrap: 'wrap' as const,
+    marginTop: '1.75rem',
+  },
+  heroStat: {
+    display: 'inline-block',
+    padding: '0.3rem 0.8rem',
+    borderRadius: '100px',
+    background: 'rgba(255,248,240,0.08)',
+    border: '1px solid rgba(255,248,240,0.14)',
+    color: 'rgba(255,248,240,0.65)',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    fontFamily: "'DM Sans', sans-serif",
+  },
+
+  // ── LAYOUT ──────────────────────────────────────────────────────────────────
+  browseSection: {
+    background: '#F7F3EA',
+    padding: 'clamp(1.75rem, 3vw, 2.5rem) 2rem',
+  },
+  encoderSection: {
+    background: '#F4F0E8',
+    padding: 'clamp(1.75rem, 3vw, 2.5rem) 2rem',
+    borderTop: '1px solid rgba(0,0,0,0.07)',
+  },
+  innerContent: {
+    maxWidth: 1100,
+    margin: '0 auto',
+  },
+  sectionLabel: {
+    display: 'block',
+    fontSize: '0.68rem',
+    fontWeight: 800,
+    letterSpacing: '0.13em',
+    textTransform: 'uppercase' as const,
+    color: '#A0522D',
+    marginBottom: '1.25rem',
+    fontFamily: "'DM Sans', sans-serif",
+  },
+
+  // ── TABS ────────────────────────────────────────────────────────────────────
+  tabs: {
+    display: 'flex',
+    gap: '0.25rem',
+    background: 'rgba(0,0,0,0.07)',
+    borderRadius: '12px',
+    padding: '4px',
+    alignSelf: 'flex-start' as const,
+    marginBottom: '1.5rem',
+    width: 'fit-content',
   },
   tab: {
     background: 'transparent',
     border: 'none',
-    borderRadius: '0.4rem',
-    padding: '0.45rem 1.1rem',
-    fontSize: '0.875rem',
-    fontWeight: 500,
+    borderRadius: '8px',
+    padding: '0.55rem 1.25rem',
+    fontSize: '0.88rem',
+    fontWeight: 600,
     color: '#6B4A30',
     cursor: 'pointer',
     fontFamily: "'DM Sans', sans-serif",
-    transition: 'background 150ms ease, color 150ms ease',
+    transition: 'background 150ms ease, color 150ms ease, box-shadow 150ms ease',
   },
   tabActive: {
-    background: '#FFFDF5',
-    color: '#E35336',
-    fontWeight: 700,
-    boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
+    background: '#E35336',
+    color: '#fff',
+    boxShadow: '0 2px 8px rgba(227,83,54,0.4)',
   },
-  tabHoverStyle: { background: 'rgba(255,253,245,0.6)', color: '#A0522D' },
+  tabHoverStyle: { background: 'rgba(227,83,54,0.1)', color: '#A0522D' },
   tabLeaveStyle: { background: 'transparent', color: '#6B4A30' },
 
-  // Panels
-  panel: {
-    background: '#FFFDF5',
-    border: '1px solid rgba(160,82,45,0.3)',
-    borderRadius: '0.625rem',
-    padding: '1.25rem 1.5rem',
-  },
-  sectionTitle: {
-    fontSize: '0.85rem',
-    fontWeight: 700,
-    color: '#A0522D',
-    marginBottom: '1rem',
-    textTransform: 'uppercase',
-    letterSpacing: '0.06em',
-    fontFamily: "'DM Sans', sans-serif",
-  },
-
-  // Gallery
+  // ── GALLERY ─────────────────────────────────────────────────────────────────
   gallery: {
     display: 'flex',
-    flexDirection: 'row',
-    overflowX: 'auto',
-    gap: '10px',
-    paddingBottom: '6px',
+    flexDirection: 'row' as const,
+    overflowX: 'auto' as const,
+    gap: '12px',
+    paddingBottom: '8px',
+    marginBottom: '1.5rem',
   },
   tile: {
-    background: '#FFFDF5',
-    border: '1px solid rgba(160,82,45,0.3)',
-    borderRadius: '0.625rem',
+    background: 'transparent',
+    border: 'none',
+    borderRadius: '12px',
     padding: 0,
     cursor: 'pointer',
-    textAlign: 'left',
-    transition: 'transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease',
-    transform: 'scale(1)',
-    boxShadow: 'none',
     outline: 'none',
     flex: '0 0 auto',
-    width: '140px',
+    width: '196px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.14), 0 1px 2px rgba(0,0,0,0.08)',
+    transition: 'transform 200ms ease, box-shadow 200ms ease',
+    overflow: 'hidden',
   },
   tileSelected: {
-    border: '2px solid #E35336',
-    boxShadow: '0 0 0 3px rgba(227,83,54,0.18)',
-    transform: 'scale(1.04)',
+    boxShadow: '0 0 0 3px #E35336, 0 8px 24px rgba(227,83,54,0.28)',
+    transform: 'translateY(-4px)',
   },
   tileHoverStyle: {
-    transform: 'scale(1.03)',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-    borderColor: 'rgba(160,82,45,0.55)',
+    transform: 'translateY(-6px)',
+    boxShadow: '0 14px 36px rgba(0,0,0,0.22), 0 4px 8px rgba(0,0,0,0.12)',
   },
   tileLeaveStyle: {
-    transform: 'scale(1)',
-    boxShadow: 'none',
-    borderColor: 'rgba(160,82,45,0.3)',
+    transform: 'translateY(0)',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.14), 0 1px 2px rgba(0,0,0,0.08)',
   },
   tileImgWrap: {
     width: '100%',
-    height: '185px',
-    overflow: 'hidden',
-    borderRadius: '0.5rem 0.5rem 0 0',
-    background: '#EDE8D5',
+    height: '140px',
+    background: '#1A1410',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
+    position: 'relative' as const,
   },
   tileImg: {
     width: '100%',
     height: '100%',
-    objectFit: 'contain',
+    objectFit: 'cover' as const,
     display: 'block',
   },
-  tileMeta: {
+  tileNameOverlay: {
+    position: 'absolute' as const,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 100%)',
+    padding: '22px 8px 7px',
     display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-    padding: '5px 8px 2px',
-    flexWrap: 'wrap',
+    flexDirection: 'column' as const,
+    gap: '3px',
   },
-  tileName: {
-    fontSize: '11px',
-    fontWeight: 600,
-    color: '#3D2B1F',
+  tileNameText: {
+    fontSize: '10.5px',
+    fontWeight: 700,
+    color: '#fff',
     fontFamily: "'DM Sans', sans-serif",
     lineHeight: 1.3,
-  },
-  tileGame: {
-    fontSize: '10px',
-    color: '#8B7355',
-    padding: '0 8px 6px',
-    fontFamily: "'DM Sans', sans-serif",
+    display: 'block',
   },
   revBadge: {
     display: 'inline-block',
-    fontSize: '9px',
+    fontSize: '8.5px',
     fontWeight: 700,
-    color: '#8B7355',
-    background: '#EDE8D5',
-    border: '1px solid rgba(160,82,45,0.3)',
+    color: 'rgba(255,255,255,0.7)',
+    background: 'rgba(255,255,255,0.15)',
+    border: '1px solid rgba(255,255,255,0.25)',
     borderRadius: '3px',
     padding: '1px 4px',
     fontFamily: "'DM Sans', sans-serif",
-    letterSpacing: '0.02em',
-    whiteSpace: 'nowrap',
+    letterSpacing: '0.03em',
+    whiteSpace: 'nowrap' as const,
+    alignSelf: 'flex-start' as const,
   },
 
-  // Card detail panel
+  // ── CARD DETAIL ─────────────────────────────────────────────────────────────
   detailPanel: {
-    background: '#FFFDF5',
-    border: '1px solid rgba(160,82,45,0.3)',
-    borderRadius: '0.625rem',
-    padding: '1.5rem',
+    background: '#FFFDF7',
+    borderRadius: '16px',
+    padding: '1.75rem',
+    border: '1px solid rgba(0,0,0,0.06)',
+    boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
   },
   detailLayout: {
     display: 'flex',
-    gap: '1.5rem',
+    gap: '1.75rem',
     alignItems: 'flex-start',
   },
   detailImgWrap: {
-    flex: '0 0 100px',
-    width: '100px',
-    minHeight: '132px',
-    background: '#EDE8D5',
-    borderRadius: '0.5rem',
+    flex: '0 0 224px',
+    width: '224px',
+    height: '160px',
+    background: '#1A1410',
+    borderRadius: '10px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -563,7 +623,7 @@ const s: Record<string, React.CSSProperties> = {
   detailImg: {
     width: '100%',
     height: '100%',
-    objectFit: 'contain',
+    objectFit: 'cover' as const,
   },
   detailInfo: {
     flex: 1,
@@ -572,22 +632,37 @@ const s: Record<string, React.CSSProperties> = {
   detailHeader: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.5rem',
-    marginBottom: '0.2rem',
-    flexWrap: 'wrap',
+    gap: '0.6rem',
+    marginBottom: '0.25rem',
+    flexWrap: 'wrap' as const,
   },
   detailName: {
-    fontSize: '1.2rem',
+    fontSize: '1.45rem',
     fontWeight: 700,
-    color: '#3D2B1F',
+    color: '#1A1008',
     fontFamily: "'Bitter', serif",
+    letterSpacing: '-0.01em',
+    lineHeight: 1.2,
+  },
+  revBadgeLarge: {
+    display: 'inline-block',
+    fontSize: '11px',
+    fontWeight: 700,
+    color: '#A0522D',
+    background: '#EDE8D5',
+    border: '1px solid rgba(160,82,45,0.3)',
+    borderRadius: '5px',
+    padding: '2px 7px',
+    fontFamily: "'DM Sans', sans-serif",
+    letterSpacing: '0.03em',
+    whiteSpace: 'nowrap' as const,
   },
   detailGame: {
-    fontSize: '0.8rem',
+    fontSize: '0.82rem',
     color: '#A0522D',
     fontFamily: "'DM Sans', sans-serif",
-    marginBottom: '0.2rem',
     fontWeight: 600,
+    marginBottom: '0.2rem',
   },
   compatGames: {
     fontSize: '0.75rem',
@@ -597,17 +672,17 @@ const s: Record<string, React.CSSProperties> = {
   },
   instructionTabBar: {
     display: 'flex',
-    gap: '0.375rem',
+    gap: '0.35rem',
     marginBottom: '0.75rem',
-    flexWrap: 'wrap',
+    flexWrap: 'wrap' as const,
   },
   instrTab: {
     background: '#EDE8D5',
-    border: '1px solid rgba(160,82,45,0.2)',
-    borderRadius: '0.375rem',
-    padding: '0.3rem 0.75rem',
+    border: '1px solid rgba(160,82,45,0.18)',
+    borderRadius: '7px',
+    padding: '0.32rem 0.8rem',
     fontSize: '0.78rem',
-    fontWeight: 500,
+    fontWeight: 600,
     color: '#6B4A30',
     cursor: 'pointer',
     fontFamily: "'DM Sans', sans-serif",
@@ -623,11 +698,11 @@ const s: Record<string, React.CSSProperties> = {
   instrTabLeaveStyle: { background: '#EDE8D5', color: '#6B4A30' },
   instructionText: {
     background: '#FAF5E8',
-    border: '1px solid rgba(160,82,45,0.15)',
-    borderRadius: '0.375rem',
-    padding: '0.875rem 1rem',
+    border: '1px solid rgba(160,82,45,0.14)',
+    borderRadius: '8px',
+    padding: '0.9rem 1rem',
     maxHeight: '180px',
-    overflowY: 'auto',
+    overflowY: 'auto' as const,
   },
   instructionPara: {
     fontSize: '0.82rem',
@@ -637,61 +712,96 @@ const s: Record<string, React.CSSProperties> = {
     margin: '0 0 0.6rem 0',
   },
 
-  // Controls
+  // ── CONTROLS ─────────────────────────────────────────────────────────────────
   controlsRow: {
     display: 'flex',
-    flexWrap: 'wrap',
+    flexWrap: 'wrap' as const,
     gap: '1rem',
     alignItems: 'flex-end',
-    marginBottom: '1rem',
+    marginBottom: '1.25rem',
   },
-  label: { display: 'flex', flexDirection: 'column', gap: '0.3rem' },
+  label: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '0.3rem',
+  },
   labelText: {
-    fontSize: '0.75rem',
-    fontWeight: 700,
+    fontSize: '0.7rem',
+    fontWeight: 800,
     color: '#8B7355',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.1em',
     fontFamily: "'DM Sans', sans-serif",
   },
   select: {
-    padding: '0.45rem 0.75rem',
-    borderRadius: '0.375rem',
-    border: '1px solid rgba(160,82,45,0.3)',
-    background: '#FAF5E8',
-    color: '#3D2B1F',
+    padding: '0.55rem 0.85rem',
+    borderRadius: '10px',
+    border: '1px solid rgba(160,82,45,0.25)',
+    background: '#FFFDF7',
+    color: '#1A1008',
     fontSize: '0.9rem',
     fontFamily: "'DM Sans', sans-serif",
-    cursor: 'pointer',
-    minWidth: 140,
-  },
-  btn: {
-    padding: '0.5rem 1.25rem',
-    borderRadius: '0.375rem',
-    border: 'none',
-    fontSize: '0.9rem',
     fontWeight: 500,
     cursor: 'pointer',
+    minWidth: 140,
+    boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+  },
+  btn: {
+    padding: '0.6rem 1.5rem',
+    borderRadius: '10px',
+    border: 'none',
+    fontSize: '0.9rem',
+    fontWeight: 700,
+    cursor: 'pointer',
     fontFamily: "'DM Sans', sans-serif",
-    transition: 'background 150ms ease, transform 80ms ease',
+    transition: 'background 150ms ease, transform 100ms ease, box-shadow 150ms ease',
+    letterSpacing: '0.01em',
     color: '#fff',
   },
-  btnPrimary: { background: '#E35336' },
-  btnPrimaryHover: { background: '#c9412a' },
-  btnSienna: { background: '#A0522D' },
-  btnSiennaHover: { background: '#7d3e22' },
-  btnGreen: { background: '#2a7d4f' },
-  btnGreenHover: { background: '#1f5c3a' },
-  btnDisabled: { opacity: 0.6, cursor: 'not-allowed' },
-
-  uploadRow: {
+  btnPrimary: {
+    background: '#E35336',
+    boxShadow: '0 2px 8px rgba(227,83,54,0.35)',
+  },
+  btnPrimaryHover: {
+    background: '#C9412A',
+    boxShadow: '0 4px 16px rgba(227,83,54,0.45)',
+    transform: 'translateY(-1px)',
+  },
+  btnOutline: {
+    background: 'transparent',
+    border: '1.5px solid rgba(160,82,45,0.5)',
+    color: '#A0522D',
+    boxShadow: 'none',
+  },
+  btnOutlineHover: {
+    background: 'rgba(160,82,45,0.08)',
+    borderColor: '#A0522D',
+    transform: 'translateY(-1px)',
+  },
+  btnOutlineGreen: {
+    background: 'transparent',
+    border: '1.5px solid rgba(42,125,79,0.5)',
+    color: '#2a7d4f',
+    boxShadow: 'none',
+  },
+  btnOutlineGreenHover: {
+    background: 'rgba(42,125,79,0.08)',
+    borderColor: '#2a7d4f',
+    transform: 'translateY(-1px)',
+  },
+  btnDisabled: {
+    opacity: 0.55,
+    cursor: 'not-allowed',
+    boxShadow: 'none',
+  },
+  uploadGroup: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.75rem',
-    flexWrap: 'wrap',
+    gap: '0.6rem',
+    flexWrap: 'wrap' as const,
   },
   uploadLabel: {
-    fontSize: '0.85rem',
+    fontSize: '0.82rem',
     color: '#8B7355',
     fontFamily: "'DM Sans', sans-serif",
   },
@@ -699,80 +809,106 @@ const s: Record<string, React.CSSProperties> = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '0.5rem',
-    padding: '0.35rem 0.85rem',
-    borderRadius: '0.375rem',
-    border: '1px solid rgba(160,82,45,0.35)',
-    background: '#EDE8D5',
+    padding: '0.4rem 0.9rem',
+    borderRadius: '10px',
+    border: '1.5px solid rgba(160,82,45,0.3)',
+    background: '#FFFDF7',
     color: '#6B4A30',
     fontSize: '0.82rem',
     fontWeight: 600,
     cursor: 'pointer',
     fontFamily: "'DM Sans', sans-serif",
+    boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
   },
   fileInputHidden: {
-    position: 'absolute',
+    position: 'absolute' as const,
     width: 1,
     height: 1,
     opacity: 0,
-    overflow: 'hidden',
+    overflow: 'hidden' as const,
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
-    whiteSpace: 'nowrap',
-  },
-  downloadRow: {
-    display: 'flex',
-    gap: '0.75rem',
-    flexWrap: 'wrap',
-    marginTop: '1rem',
-    paddingTop: '1rem',
-    borderTop: '1px solid rgba(160,82,45,0.15)',
+    whiteSpace: 'nowrap' as const,
   },
 
-  // Error
+  // ── ERROR ────────────────────────────────────────────────────────────────────
   error: {
-    color: '#d4183d',
-    background: '#fff0f0',
-    border: '1px solid rgba(212,24,61,0.25)',
-    padding: '0.5rem 0.75rem',
-    borderRadius: '0.375rem',
+    color: '#c9412a',
+    background: 'rgba(227,83,54,0.08)',
+    border: '1px solid rgba(227,83,54,0.25)',
+    padding: '0.6rem 1rem',
+    borderRadius: '8px',
     fontSize: '0.875rem',
     fontFamily: "'DM Sans', sans-serif",
+    marginBottom: '1rem',
   },
 
-  // Preview
+  // ── CANVAS PREVIEW ───────────────────────────────────────────────────────────
   previewPanel: {
-    background: '#FFFDF5',
-    border: '1px solid rgba(160,82,45,0.3)',
-    borderRadius: '0.625rem',
-    padding: '1rem',
+    background: '#1A1410',
+    borderRadius: '16px',
+    padding: '1.5rem',
+    marginTop: '1rem',
+    boxShadow: 'inset 0 2px 12px rgba(0,0,0,0.3)',
   },
   preview: {
-    overflowX: 'auto',
-    background: '#fff',
-    borderRadius: '0.375rem',
-    minHeight: 80,
+    overflowX: 'auto' as const,
+    background: 'transparent',
+    borderRadius: '8px',
   },
   previewPlaceholder: {
-    color: '#8B7355',
+    color: 'rgba(255,248,240,0.38)',
     fontSize: '0.875rem',
     fontFamily: "'DM Sans', sans-serif",
-    padding: '1rem',
+    padding: '3rem 1rem',
     margin: 0,
+    textAlign: 'center' as const,
   },
   loadingDots: {
     display: 'inline-block',
     animation: 'pulse 1.2s infinite',
   },
 
-  // Print tips
+  // ── DOWNLOAD ─────────────────────────────────────────────────────────────────
+  downloadRow: {
+    display: 'flex',
+    gap: '0.75rem',
+    flexWrap: 'wrap' as const,
+    marginTop: '1.25rem',
+  },
+
+  // ── PRINT TIPS ───────────────────────────────────────────────────────────────
   printTips: {
-    fontSize: '0.82rem',
-    color: '#8B7355',
-    background: '#EDE8D5',
+    fontSize: '0.8rem',
+    color: '#6B4A30',
+    background: 'rgba(227,83,54,0.05)',
+    border: '1px solid rgba(227,83,54,0.18)',
     borderLeft: '3px solid #E35336',
-    padding: '0.75rem 1rem',
-    borderRadius: '0 0.375rem 0.375rem 0',
+    padding: '0.9rem 1.1rem',
+    borderRadius: '0 10px 10px 0',
     lineHeight: 1.65,
     fontFamily: "'DM Sans', sans-serif",
+    marginTop: '1.25rem',
+  },
+
+  // ── FOOTER ───────────────────────────────────────────────────────────────────
+  footer: {
+    background: '#1A1410',
+    padding: '1.25rem 2rem',
+    borderTop: '1px solid rgba(255,255,255,0.06)',
+  },
+  footerInner: {
+    maxWidth: 1100,
+    margin: '0 auto',
+    display: 'flex',
+    gap: '0.5rem',
+    flexWrap: 'wrap' as const,
+    fontSize: '0.72rem',
+    color: 'rgba(255,248,240,0.35)',
+    fontFamily: "'DM Sans', sans-serif",
+    alignItems: 'center',
+  },
+  footerDot: {
+    color: 'rgba(255,248,240,0.2)',
   },
 }

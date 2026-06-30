@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --background: #F7F3EA;
-  --foreground: #1A1008;
-  --card: #FFFDF7;
+  --background: #F5F5DC;
+  --foreground: #3D2B1F;
+  --card: #FFFDF5;
   --primary: #E35336;
   --primary-foreground: #FFFFFF;
   --secondary: #F4A460;
@@ -11,17 +11,12 @@
   --muted: #EDE8D5;
   --muted-foreground: #8B7355;
   --input-background: #FAF5E8;
-  --border: rgba(160, 82, 45, 0.2);
+  --border: rgba(160, 82, 45, 0.3);
   --radius: 0.625rem;
-  --dark: #1A1410;
 }
 
 *, *::before, *::after {
   box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 body {
@@ -30,7 +25,6 @@ body {
   background: var(--background);
   color: var(--foreground);
   min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3 {
@@ -39,33 +33,12 @@ h1, h2, h3 {
 }
 
 #root {
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-/* Gallery scrollbar */
-.gallery-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(160,82,45,0.3) transparent;
-}
-.gallery-scroll::-webkit-scrollbar {
-  height: 4px;
-}
-.gallery-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.gallery-scroll::-webkit-scrollbar-thumb {
-  background: rgba(160,82,45,0.3);
-  border-radius: 2px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 0 3rem;
 }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
-}
-
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
 }
