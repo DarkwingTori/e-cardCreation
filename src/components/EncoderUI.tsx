@@ -2,12 +2,13 @@ import { useRef, useState } from 'react'
 import { EVENT_CARDS, type EventCard } from '../data/events'
 import { renderStrip, renderPrintPage, downloadPNG, type DPIOption } from '../renderer/strip-renderer'
 
-type Category = 'rs-event' | 'emerald-event'
+type Category = 'rs-event' | 'emerald-event' | 'battle-e'
 type InstructionTab = 'activation' | 'eReaderSetup' | 'cable'
 
 const CATEGORY_LABELS: Record<Category, string> = {
   'rs-event': 'Ruby / Sapphire',
   'emerald-event': 'Emerald',
+  'battle-e': 'Battle-e Series 1',
 }
 
 export default function EncoderUI() {
